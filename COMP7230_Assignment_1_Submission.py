@@ -68,6 +68,7 @@ The map was obtained from: https://www.google.com.au/maps
 """
 
 import csv
+from skimage import io 
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
@@ -209,6 +210,19 @@ def convert_lat_long(lat, long):
 
     # get the y coordinates
     y = EARTH_RADIUS * math.cos(mlat) * math.sin(mlong)
+
+    """MAP_TOP = -6.2
+    MAP_BOTTOM = -36.82
+    MAP_LEFT = 106.8
+    MAP_RIGHT = 174.77"""
+    img = io.imread("Australia_Map.jpg")
+
+    num_rows, num_cols = img.shape[:2]
+    x = x / (num_cols - 1)
+    y = y / (num_rows - 1)
+    x = abs(x)
+    y = abs(y)
+    print(str(x))
     
     return x, y
 
@@ -395,20 +409,25 @@ def generate_heat_map(records):
     array_size = 50  # y, x dimensions of the heat-map
     heat_map_data = np.zeros(shape=(array_size, array_size))
 
+
     x_data = list()
     y_data = list()
 
+    latitudes = [] 
+    longitudes = []
     for record in records:
         mlat = record["lat"]
         mlong = record["long"]
-        x,y = convert_lat_long(mlat, mlong)
-        x_data.append(x)
-        y_data.append(y)
+        #x,y = convert_lat_long(mlat, mlong)
+        #x_data.append(x)
+        #y_data.append(y)
+        latitudes.append(mlat)
+        longitudes.append(mlong)
     
-    heatmap, xedges, yedges = np.histogram2d(x_data,y_data, bins=50)
-    extent = [xedges[MAP_LEFT], xedges[MAP_RIGHT], yedges[MAP_TOP], yedges[MAP_BOTTOM]]
-    #extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-
+    #for h in heat_map_data:
+        #h[i]
+    
+    #extent = [xedges[MAP_LEFT], xedges[MAP_RIGHT], yedges[MAP_TOP], yedges[MAP_BOTTOM]]
     return heat_map_data
 
 
