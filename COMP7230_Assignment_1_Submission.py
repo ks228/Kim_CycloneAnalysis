@@ -204,11 +204,11 @@ def convert_lat_long(lat, long):
     # convert decimal degrees to radians 
     mlat,mlong = map(math.radians, [lat,long])
 	
-	# get the x coordinates
-	x = EARTH_RADIUS * math.cos(mlat) * math.cos(mlong)
+    # get the x coordinates
+    x = EARTH_RADIUS * math.cos(mlat) * math.cos(mlong)
 
-	# get the y coordinates
-	y = EARTH_RADIUS * math.cos(mlat) * math.sin(mlong)
+    # get the y coordinates
+    y = EARTH_RADIUS * math.cos(mlat) * math.sin(mlong)
     
     return x, y
 
@@ -307,6 +307,8 @@ def animation_data(cyclone_records):
     The first four elements in each tuple should be integers, the next 3 should be floats, name should be a string.
     """
     cyclone_track = list()
+
+    # get intermediate records with year, month, day, and hour converted to timestamps to sort in CHRONOLOGICAL order later.
     mrecords = []
     for record in cyclone_records:
         mdatetime = datetime(year=record["year"],
@@ -317,8 +319,10 @@ def animation_data(cyclone_records):
         mtuple = (record, mdatetime)
         mrecords.append(mtuple)
     
+    # now sort in CHRONOLOGICAL ORDER from the timestamps
     mrecords.sort(key=lambda x:x[1])
     
+    # now get the record from the intermediate record list and get relevant data to be returned
     for mrecord in mrecords:
         record = mrecord[0]
         mtuple = (int(record["year"]),
@@ -332,7 +336,6 @@ def animation_data(cyclone_records):
                   )
         cyclone_track.append(mtuple)
     
-
     return cyclone_track
 
 
@@ -388,9 +391,23 @@ def generate_heat_map(records):
     :return: a 2d numpy array of integers.
     """
 
+
     array_size = 50  # y, x dimensions of the heat-map
     heat_map_data = np.zeros(shape=(array_size, array_size))
-    # TODO: Your code here
+
+    x_data = list()
+    y_data = list()
+
+    for record in records:
+        mlat = record["lat"]
+        mlong = record["long"]
+        x,y = convert_lat_long(mlat, mlong)
+        x_data.append(x)
+        y_data.append(y)
+    
+    heatmap, xedges, yedges = np.histogram2d(x_data,y_data, bins=50)
+    extent = [xedges[MAP_LEFT], xedges[MAP_RIGHT], yedges[MAP_TOP], yedges[MAP_BOTTOM]]
+    #extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
     return heat_map_data
 
