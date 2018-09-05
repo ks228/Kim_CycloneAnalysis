@@ -203,19 +203,14 @@ def convert_lat_long(lat, long):
     
     # convert decimal degrees to radians 
     mlat,mlong = map(math.radians, [lat,long])
+	
+	# get the x coordinates
+	x = EARTH_RADIUS * math.cos(mlat) * math.cos(mlong)
 
-    # haversine formula 
-    dlon = x - lon1 
-    dlat = y - lat1 
-    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-    c = 2 * math.asin(math.sqrt(a)) 
-    km = EARTH_RADIUS * c
-    
-    print(str(x))
-    print(str(y))
+	# get the y coordinates
+	y = EARTH_RADIUS * math.cos(mlat) * math.sin(mlong)
     
     return x, y
-#convert_lat_long(-14.8,161.8)
 
 ########################################################################################################################
 #                                   Part 2 - Basic Data Visualisation
@@ -231,13 +226,16 @@ def pressure_distribution(records):
     :return: A dictionary, of {central pressure measurement : frequency count} pairs.
     """
 
+	# create simple dictionary from collections package so that we can modify
     distribution_dictionary = defaultdict(float)
+	
+	# create a list and add the records. We create a list so that we can only work on central pressure
     mlist = list()
     for record in records:
         central_pressure = record["central pressure"]
         mlist.append(central_pressure)
 
-    
+    # iterate over the list and create frequencies of individual central pressure values
     for value in mlist:
         distribution_dictionary[value] += 1
     return distribution_dictionary
