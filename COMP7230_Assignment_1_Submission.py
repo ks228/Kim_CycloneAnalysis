@@ -201,28 +201,17 @@ def convert_lat_long(lat, long):
     You should make use of the constants described in the heading.
     """
     x, y = 0.0, 0.0
-    
-    # convert decimal degrees to radians 
-    mlat,mlong = map(math.radians, [lat,long])
-	
+
     # get the x coordinates
-    x = EARTH_RADIUS * math.cos(mlat) * math.cos(mlong)
+    x = EARTH_RADIUS * math.cos(lat) * math.cos(long)
 
     # get the y coordinates
-    y = EARTH_RADIUS * math.cos(mlat) * math.sin(mlong)
+    y = EARTH_RADIUS * math.cos(lat) * math.sin(long)
 
-    """MAP_TOP = -6.2
-    MAP_BOTTOM = -36.82
-    MAP_LEFT = 106.8
-    MAP_RIGHT = 174.77"""
-    img = io.imread("Australia_Map.jpg")
-
-    num_rows, num_cols = img.shape[:2]
-    x = x / (num_cols - 1)
-    y = y / (num_rows - 1)
-    x = abs(x)
-    y = abs(y)
-    print(str(x))
+    #x = x / (762 - 1)
+    x = x / (1546 - 1)
+    #y = y / (1546 - 1)
+    y = y / (762 - 1)
     
     return x, y
 
