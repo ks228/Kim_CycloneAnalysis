@@ -393,30 +393,46 @@ def generate_heat_map(records):
     record, as produced by Question 2.
     :return: a 2d numpy array of integers.
     """
-
-
     array_size = 50  # y, x dimensions of the heat-map
     heat_map_data = np.zeros(shape=(array_size, array_size))
 
+    #### we will create our own bins based on the top,bottom,left, and right extents given
+    # get total number of bins - 2500 in our case
+    mdivider = 50*50
 
-    x_data = list()
-    y_data = list()
+    # get bound of coordinates among which cyclone count should be recorded
+    mapboundone = abs(MAP_BOTTOM) - abs(MAP_TOP)
+    mapboundtwo = MAP_RIGHT - MAP_LEFT
 
-    latitudes = [] 
-    longitudes = []
+    # get the increment so that we can go through the data 2500 records at a time
+    diffboundone = mapboundone/array_size
+    diffboundtwo = mapboundtwo/array_size
+
+    # create a list of tuples to store lat-long bounds among which cyclone count will be binned
+    mboundtuple = []
+
+    # initialize the runners to bin lat-long values first (then count at later stage)
+    latrunner = MAP_TOP
+    longrunner = MAP_LEFT
+
+    # run the runners and make list of lat,long bound tuples 
+    for i in range(0, mdivider):
+        latrunner = latrunner + diffboundone
+        longrunner = longrunner + diffboundtwo
+        mboundtuple.append((latrunner, longrunner))
+
+
+    # create a list of tuples (lat,long) from the actual data now
+    latlongtuples = [] 
     for record in records:
         mlat = record["lat"]
         mlong = record["long"]
-        #x,y = convert_lat_long(mlat, mlong)
-        #x_data.append(x)
-        #y_data.append(y)
-        latitudes.append(mlat)
-        longitudes.append(mlong)
+        latlongtuples.append((mlat,mlong))
     
-    #for h in heat_map_data:
-        #h[i]
-    
-    #extent = [xedges[MAP_LEFT], xedges[MAP_RIGHT], yedges[MAP_TOP], yedges[MAP_BOTTOM]]
+
+    # now we have the lat-long tuples with bounds and the actual lat-long tupples from the file - its time to count cyclones by comparing them
+    # now we need an algorithm to do a single pass from the actual tupple data? but we have a problem of n-squared complexity?
+    ## INCOMPLETE CODE ##
     return heat_map_data
 
 
