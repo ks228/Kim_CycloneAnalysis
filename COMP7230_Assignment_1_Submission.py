@@ -393,7 +393,7 @@ def generate_heat_map(records):
     record, as produced by Question 2.
     :return: a 2d numpy array of integers.
     """
-    array_size = 50  # y, x dimensions of the heat-map
+    array_size = 2500  # y, x dimensions of the heat-map
     heat_map_data = np.zeros(shape=(array_size, array_size))
 
     #### we will create our own bins based on the top,bottom,left, and right extents given
@@ -419,7 +419,8 @@ def generate_heat_map(records):
     for i in range(0, mdivider):
         latrunner = latrunner + diffboundone
         longrunner = longrunner + diffboundtwo
-        mboundtuple.append((latrunner, longrunner))
+        x, y = convert_lat_long(latrunner,longrunner)
+        mboundtuple.append((x, y))
 
 
     # create a list of tuples (lat,long) from the actual data now
@@ -427,12 +428,18 @@ def generate_heat_map(records):
     for record in records:
         mlat = record["lat"]
         mlong = record["long"]
-        latlongtuples.append((mlat,mlong))
+        x,y = convert_lat_long(mlat,mlong)
+        latlongtuples.append((x,y))
     
 
     # now we have the lat-long tuples with bounds and the actual lat-long tupples from the file - its time to count cyclones by comparing them
     # now we need an algorithm to do a single pass from the actual tupple data? but we have a problem of n-squared complexity?
     ## INCOMPLETE CODE ##
+    for j in range(0, len(mboundtuple)-1):
+        for k in range(len(latlongtuples)-1):
+            if ((latlongtuples[k][0] >= mboundtuple[j][0] and latlongtuples[k][0] <= mboundtuple[j+1][0])
+                    and (latlongtuples[k][1] >= mboundtuple[j][1] and latlongtuples[k][1] <= mboundtuple[j+1][1])):
+                    heat_map_data[j][k] = heat_map_data[j][k] + 1
     return heat_map_data
 
 
